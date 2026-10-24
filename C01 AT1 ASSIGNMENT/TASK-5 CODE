@@ -1,0 +1,29 @@
+class TicketCounter {
+
+    private static long nextTicketId = 1000;
+
+    private final long ticketId;
+    private final String regNo;
+
+    TicketCounter(String regNo) {
+        this.ticketId = ++nextTicketId;
+        this.regNo = regNo;
+    }
+
+    public String toString() {
+        return "Ticket " + ticketId + " for " + regNo;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        TicketCounter north = new TicketCounter("TN01A1");
+        TicketCounter south = new TicketCounter("TN02B2");
+        TicketCounter another = new TicketCounter("TN03C3");
+
+        System.out.println(north);
+        System.out.println(south);
+        System.out.println(another);
+    }
+}

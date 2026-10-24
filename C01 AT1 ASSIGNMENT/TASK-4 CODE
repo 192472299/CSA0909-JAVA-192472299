@@ -1,0 +1,39 @@
+class ParkingTicket {
+    private final long ticketId;
+    private final String regNo;
+    private final int floor;
+    private final int slot;
+
+    ParkingTicket(long ticketId, String regNo) {
+        this(ticketId, regNo, -1, -1);
+    }
+
+    ParkingTicket(long ticketId, String regNo, int floor, int slot) {
+        if (ticketId <= 0)
+            throw new IllegalArgumentException("Invalid ticket ID");
+
+        if (regNo == null || regNo.isBlank())
+            throw new IllegalArgumentException("Invalid registration");
+
+        this.ticketId = ticketId;
+        this.regNo = regNo;
+        this.floor = floor;
+        this.slot = slot;
+    }
+
+    public String toString() {
+        return "Ticket " + ticketId + ": " + regNo
+                + ", floor=" + floor + ", slot=" + slot;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        ParkingTicket t1 = new ParkingTicket(1001, "TN01AT", 1, 1);
+        ParkingTicket t2 = new ParkingTicket(1002, "TN02BZ", 1, 4);
+
+        System.out.println(t1);
+        System.out.println(t2);
+    }
+}

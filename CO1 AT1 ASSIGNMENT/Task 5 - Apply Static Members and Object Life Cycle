@@ -1,0 +1,43 @@
+public class Task05 {
+
+    static class ParkingTicket {
+        static int ticketCounter = 0;
+
+        int ticketId;
+        String vehicleNo;
+
+        ParkingTicket(String vehicleNo) {
+            this.vehicleNo = vehicleNo;
+            ticketId = ++ticketCounter;
+        }
+
+        void display() {
+            System.out.println("Ticket ID: " + ticketId);
+            System.out.println("Vehicle Number: " + vehicleNo);
+        }
+
+        static void showTotalTickets() {
+            System.out.println("Total Tickets: " + ticketCounter);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        ParkingTicket t1 = new ParkingTicket("TN01A1");
+        ParkingTicket t2 = new ParkingTicket("TN02B2");
+
+        t1.display();
+        System.out.println();
+
+        t2.display();
+        System.out.println();
+
+        ParkingTicket.showTotalTickets();
+
+        t1 = null;
+
+        System.out.println("First ticket reference removed.");
+
+        ParkingTicket.showTotalTickets();
+    }
+}

@@ -1,0 +1,49 @@
+
+public class Task05 {
+
+    static class Vehicle {
+        String regNo;
+
+        Vehicle(String regNo) {
+            this.regNo = regNo;
+        }
+
+        void display() {
+            System.out.println("Registration Number: " + regNo);
+        }
+    }
+
+    static class Car extends Vehicle {
+        Car(String regNo) {
+            super(regNo);
+        }
+
+        void showType() {
+            System.out.println("Vehicle Type: Car");
+        }
+    }
+
+    static class ElectricCar extends Car {
+        ElectricCar(String regNo) {
+            super(regNo);
+        }
+
+        void showCharging() {
+            System.out.println("Charging Required: Yes");
+        }
+    }
+
+    public static void main(String[] args) {
+        Car car = new Car("TN02B2");
+        ElectricCar ev = new ElectricCar("TN03C3");
+
+        car.display();
+        car.showType();
+
+        System.out.println();
+
+        ev.display();
+        ev.showType();
+        ev.showCharging();
+    }
+}

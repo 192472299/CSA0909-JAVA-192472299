@@ -1,0 +1,48 @@
+
+public class Task06 {
+
+    static class Vehicle {
+        String regNo;
+
+        Vehicle(String regNo) {
+            this.regNo = regNo;
+            System.out.println("Vehicle Constructor");
+        }
+
+        void display() {
+            System.out.println("Registration Number: " + regNo);
+        }
+    }
+
+    static class Car extends Vehicle {
+        int seats;
+
+        Car(String regNo, int seats) {
+            super(regNo);
+            this.seats = seats;
+            System.out.println("Car Constructor");
+        }
+    }
+
+    static class ElectricCar extends Car {
+        int batteryCapacity;
+
+        ElectricCar(String regNo, int seats, int batteryCapacity) {
+            super(regNo, seats);
+            this.batteryCapacity = batteryCapacity;
+            System.out.println("ElectricCar Constructor");
+        }
+
+        void showDetails() {
+            display();
+            System.out.println("Seats: " + seats);
+            System.out.println("Battery Capacity: " +
+                    batteryCapacity + " kWh");
+        }
+    }
+
+    public static void main(String[] args) {
+        ElectricCar ev = new ElectricCar("TN03C3", 5, 60);
+        ev.showDetails();
+    }
+}

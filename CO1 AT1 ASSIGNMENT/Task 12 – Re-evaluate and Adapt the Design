@@ -1,0 +1,121 @@
+
+abstract class Vehicle {
+    protected String number;
+
+    Vehicle(String number) {
+        this.number = number;
+    }
+}
+
+interface PricingRule {
+    double calculateFee(int hours, int entryHour, int exitHour);
+}
+
+class Car extends Vehicle implements PricingRule {
+    Car(String number) {
+        super(number);
+    }
+
+    public double calculateFee(int hours, int entryHour, int exitHour) {
+        return hours * 30.0;
+    }
+}
+
+class EBike extends Vehicle implements PricingRule {
+    EBike(String number) {
+        super(number);
+    }
+
+    public double calculateFee(int hours, int entryHour, int exitHour) {
+        return 20.0;
+    }
+}
+
+class DeliveryVan extends Vehicle implements PricingRule {
+    DeliveryVan(String number) {
+        super(number);
+    }
+
+    public double calculateFee(int hours, int entryHour, int exitHour) {
+        int doubleRateHours = 0;
+
+        for (int h = entryHour; h < exitHour; h++) {
+            if (h >= 9 && h < 17) {
+                doubleRateHours++;
+            }
+        }
+
+        int normalHours = hours - doubleRateHours;
+        return normalHours * 30.0 + doubleRateHours * 60.0;
+    }
+}
+
+interface ParkingPass {
+    boolean isValidForOneDay();
+}
+
+class OneDayVisitorPass implements ParkingPass {
+    public boolean isValidForOneDay() {
+        return true;
+    }
+}
+
+class ParkingFacility {
+    private final boolean[][] slots;
+
+    ParkingFacility(int[] slotsPerFloor) {
+        slots = new boolean[slotsPerFloor.length][];
+
+        for (int i = 0; i < slotsPerFloor.length; i++) {
+            slots[i] = new boolean[slotsPerFloor[i]];
+        }
+    }
+
+    boolean park(int floor, int slot) {
+        if (floor < 0 || floor >= slots.length ||
+            slot < 0 || slot >= slots[floor].length ||
+            slots[floor][slot]) {
+            return false;
+        }
+
+        slots[floor][slot] = true;
+        return true;
+    }
+
+    int getFloorCount() {
+        return slots.length;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        PricingRule car = new Car("CAR01");
+        PricingRule ebike = new EBike("EB01");
+        PricingRule van = new DeliveryVan("VAN01");
+
+        System.out.println("Car fee: Rs." +
+                car.calculateFee(2, 8, 10));
+
+        System.out.println("E-bike fee: Rs." +
+                ebike.calculateFee(2, 8, 10));
+
+        System.out.println("Delivery van fee: Rs." +
+                van.calculateFee(2, 8, 10));
+
+        ParkingPass pass = new OneDayVisitorPass();
+        System.out.println("One-day pass valid: " +
+                pass.isValidForOneDay());
+
+        int[] capacity = {20, 25, 30, 35, 40};
+        ParkingFacility facility = new ParkingFacility(capacity);
+
+        System.out.println("Total floors: " +
+                facility.getFloorCount());
+
+        System.out.println("First allocation: " +
+                facility.park(0, 0));
+
+        System.out.println("Duplicate allocation: " +
+                facility.park(0, 0));
+    }
+}

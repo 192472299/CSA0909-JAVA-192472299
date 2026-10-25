@@ -1,0 +1,50 @@
+import java.util.Scanner;
+
+public class Task02 {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        String vehicleNo;
+        int floor, slot, duration;
+        double fee;
+        double entryTime;
+
+        // Different floors can have different slot counts
+        String[][] parking = new String[2][];
+        parking[0] = new String[3];
+        parking[1] = new String[2];
+
+        System.out.print("Enter Vehicle Number: ");
+        vehicleNo = sc.nextLine();
+
+        System.out.print("Enter Floor Number (1-2): ");
+        floor = sc.nextInt();
+
+        System.out.print("Enter Slot Number: ");
+        slot = sc.nextInt();
+
+        System.out.print("Enter parking duration in minutes: ");
+        duration = sc.nextInt();
+
+        // Convert minutes to hours without losing precision
+        double hours = duration / 60.0;
+        fee = hours * 30.0;
+
+        if (floor >= 1 && floor <= parking.length &&
+            slot >= 1 && slot <= parking[floor - 1].length) {
+
+            parking[floor - 1][slot - 1] = vehicleNo;
+
+            System.out.println("\nVehicle Number: " + vehicleNo);
+            System.out.println("Floor Number: " + floor);
+            System.out.println("Slot Number: " + slot);
+            System.out.println("Duration: " + duration + " minutes");
+            System.out.println("Duration in Hours: " + hours);
+            System.out.println("Parking Fee: Rs. " + fee);
+        } else {
+            System.out.println("Invalid floor or slot number.");
+        }
+
+        sc.close();
+    }
+}

@@ -1,0 +1,38 @@
+
+public class Task04 {
+
+    static class Vehicle {
+        String regNo;
+        String type;
+        boolean isParked;
+
+        Vehicle(String regNo, String type) {
+            this.regNo = regNo;
+            this.type = type;
+            this.isParked = false;
+        }
+
+        void parkVehicle() {
+            isParked = true;
+            System.out.println(regNo + " is parked.");
+        }
+
+        void display() {
+            System.out.println("Registration Number: " + regNo);
+            System.out.println("Vehicle Type: " + type);
+            System.out.println("Parked: " + isParked);
+        }
+    }
+
+    public static void main(String[] args) {
+        Vehicle v1 = new Vehicle("TN01A1", "TwoWheeler");
+        Vehicle v2 = new Vehicle("TN02B2", "Car");
+
+        v1.parkVehicle();
+
+        v1.display();
+        System.out.println();
+
+        v2.display();
+    }
+}

@@ -1,0 +1,70 @@
+public class Task04 {
+
+    static class Vehicle {
+        String vehicleNo;
+        String vehicleType;
+
+        // Default constructor
+        Vehicle() {
+            this("UNKNOWN", "Car");
+        }
+
+        // Parameterised constructor
+        Vehicle(String vehicleNo, String vehicleType) {
+            this.vehicleNo = vehicleNo;
+            this.vehicleType = vehicleType;
+        }
+
+        void display() {
+            System.out.println("Vehicle Number: " + vehicleNo);
+            System.out.println("Vehicle Type: " + vehicleType);
+        }
+    }
+
+    static class ParkingTicket {
+        static int counter = 0;
+
+        int ticketNo;
+        Vehicle vehicle;
+        int floor;
+        int slot;
+
+        // Default constructor
+        ParkingTicket() {
+            this(new Vehicle(), 0, 0);
+        }
+
+        // Parameterised constructor
+        ParkingTicket(Vehicle vehicle, int floor, int slot) {
+            this.ticketNo = ++counter;
+            this.vehicle = vehicle;
+            this.floor = floor;
+            this.slot = slot;
+        }
+
+        // Copy constructor
+        ParkingTicket(ParkingTicket oldTicket) {
+            this(oldTicket.vehicle, oldTicket.floor, oldTicket.slot);
+        }
+
+        void display() {
+            System.out.println("Ticket Number: " + ticketNo);
+            System.out.println("Vehicle Number: " + vehicle.vehicleNo);
+            System.out.println("Floor: " + floor);
+            System.out.println("Slot: " + slot);
+        }
+    }
+
+    public static void main(String[] args) {
+        Vehicle v1 = new Vehicle("TN01AB1111", "Car");
+
+        ParkingTicket t1 = new ParkingTicket(v1, 1, 2);
+        ParkingTicket t2 = new ParkingTicket(t1);
+
+        System.out.println("Original Ticket");
+        t1.display();
+
+        System.out.println("\nCopied Ticket");
+        t2.display();
+    }
+}

@@ -1,0 +1,114 @@
+import java.time.LocalTime;
+
+interface Chargeable {
+    double chargingFee(int kWh);
+}
+
+abstract class Vehicle {
+    private final String regNo;
+
+    protected Vehicle(String regNo) {
+        this.regNo = regNo;
+    }
+
+    public String getRegNo() {
+        return regNo;
+    }
+
+    protected abstract double ratePerHour();
+
+    // Runtime polymorphism through method overriding
+    public double calculateFee(int minutes) {
+        int hours = minutes / 60;
+
+        // Round up if there are remaining minutes
+        if (minutes % 60 != 0) {
+            hours++;
+        }
+
+        return hours * ratePerHour();
+    }
+
+    // Compile-time polymorphism through overloading
+    public double calculateFee(LocalTime in, LocalTime out) {
+        int minutes = java.time.Duration.between(in, out).toMinutes();
+
+        if (minutes < 0) {
+            minutes += 24 * 60;
+        }
+
+        return calculateFee(minutes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Vehicle
+                && regNo.equals(((Vehicle) o).regNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return regNo.hashCode();
+    }
+}
+
+class TwoWheeler extends Vehicle {
+    TwoWheeler(String regNo) {
+        super(regNo);
+    }
+
+    @Override
+    protected double ratePerHour() {
+        return 10;
+    }
+}
+
+class Car extends Vehicle {
+    Car(String regNo) {
+        super(regNo);
+    }
+
+    @Override
+    protected double ratePerHour() {
+        return 30;
+    }
+}
+
+class ElectricCar extends Car implements Chargeable {
+    ElectricCar(String regNo) {
+        super(regNo);
+    }
+
+    @Override
+    public double chargingFee(int kWh) {
+        return kWh * 12.0;
+    }
+
+    @Override
+    public double calculateFee(int minutes) {
+        return super.calculateFee(minutes) + chargingFee(10);
+    }
+}
+
+public class FeeDemo {
+    public static void main(String[] args) {
+        Vehicle[] parked = {
+            new TwoWheeler("TN01A1"),
+            new Car("TN02B2"),
+            new ElectricCar("TN03C3")
+        };
+
+        for (Vehicle v : parked) {
+            System.out.println(
+                v.getClass().getSimpleName() + " "
+                + v.getRegNo() + " -> Rs "
+                + v.calculateFee(130)
+            );
+        }
+
+        Vehicle v1 = new Car("TN02B2");
+        Vehicle v2 = new ElectricCar("TN02B2");
+
+        System.out.println(v1.equals(v2));
+    }
+}

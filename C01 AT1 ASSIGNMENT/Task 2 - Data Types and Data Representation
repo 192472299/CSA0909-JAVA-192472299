@@ -1,0 +1,21 @@
+public class Task02 {
+    public static void main(String[] args) {
+
+        int floorNo = 2;
+        int slotNo = 5;
+        String vehicleNo = "TN02B2";
+        long entryTime = 1000L;
+        double duration = 2.5;
+        double fee = 75.50;
+
+        int totalMinutes = (int)(duration * 60);
+
+        System.out.println("Floor Number: " + floorNo);
+        System.out.println("Slot Number: " + slotNo);
+        System.out.println("Vehicle Number: " + vehicleNo);
+        System.out.println("Entry Time: " + entryTime);
+        System.out.println("Duration: " + duration + " hours");
+        System.out.println("Duration in Minutes: " + totalMinutes);
+        System.out.println("Parking Fee: Rs. " + fee);
+    }
+}

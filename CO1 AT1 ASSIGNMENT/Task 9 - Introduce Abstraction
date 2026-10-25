@@ -1,0 +1,110 @@
+
+interface Chargeable {
+    double chargingFee(int kWh);
+
+    // Default method
+    default void showChargingInfo() {
+        System.out.println("EV Charging Available");
+    }
+
+    // Static method
+    static void showMessage() {
+        System.out.println("Smart Parking System");
+    }
+}
+
+interface Payable {
+    double calculatePayment();
+}
+
+abstract class Vehicle {
+    protected String regNo;
+
+    Vehicle(String regNo) {
+        this.regNo = regNo;
+    }
+
+    public String getRegNo() {
+        return regNo;
+    }
+
+    abstract double calculateFee(int hours);
+}
+
+class TwoWheeler extends Vehicle {
+    TwoWheeler(String regNo) {
+        super(regNo);
+    }
+
+    @Override
+    double calculateFee(int hours) {
+        return hours * 10.0;
+    }
+}
+
+class Car extends Vehicle {
+    Car(String regNo) {
+        super(regNo);
+    }
+
+    @Override
+    double calculateFee(int hours) {
+        return hours * 30.0;
+    }
+}
+
+class ElectricCar extends Car implements Chargeable {
+    ElectricCar(String regNo) {
+        super(regNo);
+    }
+
+    @Override
+    double calculateFee(int hours) {
+        return super.calculateFee(hours);
+    }
+
+    @Override
+    public double chargingFee(int kWh) {
+        return kWh * 12.0;
+    }
+}
+
+class VisitorPayment implements Payable {
+    private double amount;
+
+    VisitorPayment(double amount) {
+        this.amount = amount;
+    }
+
+    @Override
+    public double calculatePayment() {
+        return amount;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Vehicle v1 = new TwoWheeler("TN01A1");
+        Vehicle v2 = new Car("TN02B2");
+        ElectricCar ev = new ElectricCar("TN03C3");
+
+        System.out.println("TwoWheeler Fee: Rs. "
+                + v1.calculateFee(3));
+
+        System.out.println("Car Fee: Rs. "
+                + v2.calculateFee(3));
+
+        System.out.println("ElectricCar Parking Fee: Rs. "
+                + ev.calculateFee(3));
+
+        System.out.println("Charging Fee: Rs. "
+                + ev.chargingFee(10));
+
+        ev.showChargingInfo();
+        Chargeable.showMessage();
+
+        Payable payment = new VisitorPayment(100);
+        System.out.println("Visitor Payment: Rs. "
+                + payment.calculatePayment());
+    }
+}

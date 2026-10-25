@@ -1,0 +1,321 @@
+
+import java.util.*;
+
+// Task 6, 7, 8, 9: Inheritance, overriding and abstraction
+abstract class Vehicle {
+    private final String regNo;
+
+    Vehicle(String regNo) {
+        if (regNo == null || regNo.trim().isEmpty())
+            throw new IllegalArgumentException("Invalid registration");
+        this.regNo = regNo;
+    }
+
+    public final String getRegNo() {
+        return regNo;
+    }
+
+    public abstract double calculateFee(
+            int hours, int entryHour, int exitHour);
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Vehicle))
+            return false;
+        Vehicle other = (Vehicle) obj;
+        return regNo.equals(other.regNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return regNo.hashCode();
+    }
+}
+
+// Task 9: Interface for charging
+interface Chargeable {
+    double chargingFee(int kWh);
+}
+
+// Task 8, 9: Different vehicle types
+class Bike extends Vehicle {
+    Bike(String regNo) {
+        super(regNo);
+    }
+
+    public double calculateFee(int hours, int entry, int exit) {
+        return hours * 10.0;
+    }
+}
+
+class Car extends Vehicle {
+    Car(String regNo) {
+        super(regNo);
+    }
+
+    public double calculateFee(int hours, int entry, int exit) {
+        return hours * 30.0;
+    }
+}
+
+class ElectricCar extends Car implements Chargeable {
+    ElectricCar(String regNo) {
+        super(regNo);
+    }
+
+    public double chargingFee(int kWh) {
+        return kWh * 12.0;
+    }
+
+    public double calculateFee(int hours, int entry, int exit) {
+        return super.calculateFee(hours, entry, exit);
+    }
+}
+
+class EBike extends Vehicle {
+    EBike(String regNo) {
+        super(regNo);
+    }
+
+    public double calculateFee(int hours, int entry, int exit) {
+        return 20.0; // Flat fee
+    }
+}
+
+class DeliveryVan extends Vehicle {
+    DeliveryVan(String regNo) {
+        super(regNo);
+    }
+
+    public double calculateFee(int hours, int entry, int exit) {
+        double fee = 0;
+
+        for (int i = 0; i < hours; i++) {
+            int hour = (entry + i) % 24;
+
+            if (hour >= 9 && hour < 17)
+                fee += 60.0; // Double the car rate
+            else
+                fee += 30.0;
+        }
+
+        return fee;
+    }
+}
+
+// Task 9, 12: One-day visitor pass
+interface ParkingPass {
+    boolean isValidForOneDay();
+}
+
+class OneDayVisitorPass implements ParkingPass {
+    public boolean isValidForOneDay() {
+        return true;
+    }
+}
+
+// Task 4, 5: Ticket constructors and static counter
+class ParkingTicket {
+    private static int ticketCounter = 0;
+
+    private final int ticketId;
+    private final Vehicle vehicle;
+    private final int floor;
+    private final int slot;
+    private final int hours;
+    private final int entryHour;
+    private final int exitHour;
+    private final int kWh;
+    private final ParkingPass pass;
+
+    ParkingTicket(Vehicle vehicle, int floor, int slot,
+                  int hours, int entryHour, int exitHour,
+                  int kWh, ParkingPass pass) {
+        this.ticketId = ++ticketCounter;
+        this.vehicle = vehicle;
+        this.floor = floor;
+        this.slot = slot;
+        this.hours = hours;
+        this.entryHour = entryHour;
+        this.exitHour = exitHour;
+        this.kWh = kWh;
+        this.pass = pass;
+    }
+
+    // Copy constructor
+    ParkingTicket(ParkingTicket other) {
+        this(other.vehicle, other.floor, other.slot,
+             other.hours, other.entryHour, other.exitHour,
+             other.kWh, other.pass);
+    }
+
+    public String getRegNo() {
+        return vehicle.getRegNo();
+    }
+
+    public int getFloor() {
+        return floor;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public int getTicketId() {
+        return ticketId;
+    }
+
+    public double calculateFee() {
+        if (pass != null && pass.isValidForOneDay())
+            return 0.0;
+
+        double fee = vehicle.calculateFee(
+                hours, entryHour, exitHour);
+
+        if (vehicle instanceof Chargeable)
+            fee += ((Chargeable) vehicle).chargingFee(kWh);
+
+        return fee;
+    }
+
+    public static void showTotalTickets() {
+        System.out.println("Tickets created: " + ticketCounter);
+    }
+}
+
+// Task 1, 2, 3, 10, 11, 12: Parking facility
+class ParkingFacility {
+    private final boolean[][] slots;
+    private final Map<String, ParkingTicket> activeTickets;
+    private double collection = 0;
+
+    ParkingFacility(int[] slotsPerFloor) {
+        slots = new boolean[slotsPerFloor.length][];
+
+        for (int i = 0; i < slotsPerFloor.length; i++) {
+            slots[i] = new boolean[slotsPerFloor[i]];
+        }
+
+        activeTickets = new HashMap<>();
+    }
+
+    public boolean park(Vehicle vehicle, int hours,
+                        int entryHour, int exitHour,
+                        int kWh, ParkingPass pass) {
+
+        if (vehicle == null || hours < 0 || kWh < 0) {
+            System.out.println("Invalid parking details");
+            return false;
+        }
+
+        if (activeTickets.containsKey(vehicle.getRegNo())) {
+            System.out.println("Duplicate registration: "
+                    + vehicle.getRegNo());
+            return false;
+        }
+
+        for (int f = 0; f < slots.length; f++) {
+            for (int s = 0; s < slots[f].length; s++) {
+                if (!slots[f][s]) {
+                    slots[f][s] = true;
+
+                    ParkingTicket ticket = new ParkingTicket(
+                            vehicle, f + 1, s + 1, hours,
+                            entryHour, exitHour, kWh, pass);
+
+                    activeTickets.put(vehicle.getRegNo(), ticket);
+
+                    System.out.println(vehicle.getRegNo()
+                            + " parked: floor " + (f + 1)
+                            + ", slot " + (s + 1));
+
+                    return true;
+                }
+            }
+        }
+
+        System.out.println("Parking full");
+        return false;
+    }
+
+    public void exit(String regNo, int floor, int slot) {
+        if (floor < 1 || floor > slots.length ||
+            slot < 1 || slot > slots[floor - 1].length) {
+            System.out.println("Invalid slot");
+            return;
+        }
+
+        ParkingTicket ticket = activeTickets.get(regNo);
+
+        if (ticket == null ||
+            ticket.getFloor() != floor ||
+            ticket.getSlot() != slot) {
+            System.out.println("Ticket not found");
+            return;
+        }
+
+        double fee = ticket.calculateFee();
+        collection += fee;
+
+        System.out.println(regNo + " parking fee: Rs."
+                + fee);
+
+        slots[floor - 1][slot - 1] = false;
+        activeTickets.remove(regNo);
+    }
+
+    public double getCollection() {
+        return collection;
+    }
+
+    public int getFloorCount() {
+        return slots.length;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        // Five floors with different slot capacities
+        int[] capacity = {2, 3, 2, 2, 3};
+        ParkingFacility facility = new ParkingFacility(capacity);
+
+        System.out.println("CAMPUS SMART PARKING SYSTEM");
+
+        // Normal operation
+        facility.park(new Bike("TN01"), 1, 8, 9, 0, null);
+        facility.park(new Car("TN02"), 2, 8, 10, 0, null);
+        facility.park(new ElectricCar("TN03"),
+                2, 8, 10, 10, null);
+        facility.park(new EBike("TN04"), 1, 10, 11, 0, null);
+        facility.park(new DeliveryVan("TN05"),
+                2, 8, 10, 0, null);
+
+        // Invalid and boundary tests
+        facility.park(new Car("TN02"), 1, 8, 9, 0, null);
+        facility.park(new Car("TN06"), -1, 8, 9, 0, null);
+
+        // One-day visitor pass
+        facility.park(new Car("TN07"), 2, 8, 10, 0,
+                new OneDayVisitorPass());
+
+        // Exit vehicles
+        facility.exit("TN01", 1, 1);
+        facility.exit("TN02", 1, 2);
+        facility.exit("TN03", 2, 1);
+        facility.exit("TN04", 2, 2);
+        facility.exit("TN05", 2, 3);
+        facility.exit("TN07", 2, 1);
+
+        // Invalid slot test
+        facility.exit("TN02", 9, 1);
+
+        System.out.println("Total parking collection: Rs."
+                + facility.getCollection());
+
+        System.out.println("Total floors: "
+                + facility.getFloorCount());
+
+        ParkingTicket.showTotalTickets();
+    }
+}

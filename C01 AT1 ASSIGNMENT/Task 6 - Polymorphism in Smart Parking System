@@ -1,0 +1,45 @@
+
+public class Task06 {
+
+    static class Vehicle {
+        String regNo;
+
+        Vehicle(String regNo) {
+            this.regNo = regNo;
+        }
+
+        void displayFee() {
+            System.out.println("Parking fee not defined");
+        }
+    }
+
+    static class TwoWheeler extends Vehicle {
+        TwoWheeler(String regNo) {
+            super(regNo);
+        }
+
+        @Override
+        void displayFee() {
+            System.out.println(regNo + " Parking Fee: Rs. 20");
+        }
+    }
+
+    static class Car extends Vehicle {
+        Car(String regNo) {
+            super(regNo);
+        }
+
+        @Override
+        void displayFee() {
+            System.out.println(regNo + " Parking Fee: Rs. 50");
+        }
+    }
+
+    public static void main(String[] args) {
+        Vehicle v1 = new TwoWheeler("TN01A1");
+        Vehicle v2 = new Car("TN02B2");
+
+        v1.displayFee();
+        v2.displayFee();
+    }
+}

@@ -1,0 +1,38 @@
+public class Task01 {
+
+    static class Vehicle {
+        String regNo;
+        String type;
+
+        Vehicle(String regNo, String type) {
+            this.regNo = regNo;
+            this.type = type;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Vehicle[] vehicles = {
+            new Vehicle("TN01A1", "TwoWheeler"),
+            new Vehicle("TN02B2", "Car"),
+            new Vehicle("TN03C3", "ElectricCar")
+        };
+
+        String search = "TN02B2";
+        boolean found = false;
+
+        for (Vehicle v : vehicles) {
+            if (v.regNo.equals(search)) {
+                System.out.println("Vehicle Found");
+                System.out.println("Registration Number: " + v.regNo);
+                System.out.println("Vehicle Type: " + v.type);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Vehicle Not Found");
+        }
+    }
+}

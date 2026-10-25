@@ -1,0 +1,97 @@
+
+import java.util.*;
+
+class ParkingTicket {
+    String vehicleNo, type;
+    int slot, hours;
+
+    ParkingTicket(String vehicleNo, String type, int slot, int hours) {
+        this.vehicleNo = vehicleNo;
+        this.type = type;
+        this.slot = slot;
+        this.hours = hours;
+    }
+
+    double calculateFee() {
+        if (type.equals("Bike"))
+            return hours * 10;
+        else if (type.equals("Car"))
+            return hours * 30;
+        else
+            return hours * 30 + 20;
+    }
+}
+
+public class Main {
+    static ParkingTicket[] tickets = new ParkingTicket[3];
+    static boolean[] slots = new boolean[3];
+    static double collection = 0;
+
+    static boolean park(String no, String type, int hours) {
+        for (ParkingTicket t : tickets) {
+            if (t != null && t.vehicleNo.equals(no)) {
+                System.out.println("Duplicate registration: " + no);
+                return false;
+            }
+        }
+
+        if (type.equals("Bike") == false &&
+            type.equals("Car") == false &&
+            type.equals("EV") == false) {
+            System.out.println("Invalid vehicle type");
+            return false;
+        }
+
+        for (int i = 0; i < slots.length; i++) {
+            if (!slots[i]) {
+                slots[i] = true;
+                tickets[i] = new ParkingTicket(no, type, i + 1, hours);
+                System.out.println(no + " parked in slot " + (i + 1));
+                return true;
+            }
+        }
+
+        System.out.println("Parking full");
+        return false;
+    }
+
+    static void exit(String no, int slot) {
+        if (slot < 1 || slot > slots.length || !slots[slot - 1]) {
+            System.out.println("Invalid slot");
+            return;
+        }
+
+        ParkingTicket t = tickets[slot - 1];
+
+        if (t == null || !t.vehicleNo.equals(no)) {
+            System.out.println("Ticket not found");
+            return;
+        }
+
+        double fee = t.calculateFee();
+        collection += fee;
+        System.out.println(no + " fee: Rs." + fee);
+
+        tickets[slot - 1] = null;
+        slots[slot - 1] = false;
+    }
+
+    public static void main(String[] args) {
+        park("TN01", "Bike", 1);
+        park("TN02", "Car", 2);
+        park("TN03", "EV", 1);
+
+        park("TN01", "Car", 1);  // Duplicate
+        park("TN04", "Bus", 1);  // Invalid type
+        park("TN04", "Bike", 1); // Parking full
+
+        exit("TN01", 1);
+        park("TN04", "Bike", 0); // Last free slot
+
+        exit("TN02", 9);         // Invalid slot
+        exit("TN02", 2);
+        exit("TN03", 3);
+
+        System.out.println("Total collection: Rs." + collection);
+    }
+}

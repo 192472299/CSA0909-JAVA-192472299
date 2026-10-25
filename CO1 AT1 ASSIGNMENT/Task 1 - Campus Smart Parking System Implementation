@@ -1,0 +1,82 @@
+
+public class Task01 {
+
+    static class Vehicle {
+        String regNo;
+        String type;
+
+        Vehicle(String regNo, String type) {
+            this.regNo = regNo;
+            this.type = type;
+        }
+    }
+
+    static class ParkingTicket {
+        static int counter = 0;
+
+        int ticketNo;
+        Vehicle vehicle;
+        int floor;
+        int slot;
+
+        ParkingTicket(Vehicle vehicle, int floor, int slot) {
+            counter++;
+            ticketNo = counter;
+            this.vehicle = vehicle;
+            this.floor = floor;
+            this.slot = slot;
+        }
+
+        void display() {
+            System.out.println("Ticket Number: " + ticketNo);
+            System.out.println("Vehicle Number: " + vehicle.regNo);
+            System.out.println("Vehicle Type: " + vehicle.type);
+            System.out.println("Floor Number: " + floor);
+            System.out.println("Slot Number: " + slot);
+        }
+    }
+
+    static class ParkingFacility {
+        String[][] slots = new String[2][2];
+
+        int[] allocateSlot(String regNo) {
+            for (int i = 0; i < slots.length; i++) {
+                for (int j = 0; j < slots[i].length; j++) {
+                    if (slots[i][j] == null) {
+                        slots[i][j] = regNo;
+                        return new int[]{i + 1, j + 1};
+                    }
+                }
+            }
+            return null;
+        }
+
+        void releaseSlot(int floor, int slot) {
+            if (floor >= 1 && floor <= slots.length &&
+                slot >= 1 && slot <= slots[floor - 1].length) {
+                slots[floor - 1][slot - 1] = null;
+                System.out.println("Parking slot released.");
+            } else {
+                System.out.println("Invalid parking slot.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ParkingFacility parking = new ParkingFacility();
+
+        Vehicle v1 = new Vehicle("TN01A1", "TwoWheeler");
+
+        int[] position = parking.allocateSlot(v1.regNo);
+
+        if (position != null) {
+            ParkingTicket ticket =
+                new ParkingTicket(v1, position[0], position[1]);
+
+            System.out.println("Vehicle Parked Successfully");
+            ticket.display();
+        } else {
+            System.out.println("Parking Full");
+        }
+    }
+}
